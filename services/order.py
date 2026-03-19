@@ -14,7 +14,7 @@ def create_order(tickets: List[Dict],
     order = Order.objects.create(user=user)
     if date is not None:
         order.created_at = date
-    order.save()
+        order.save()
     for ticket in tickets:
         Ticket.objects.create(
             order=order,
@@ -24,7 +24,7 @@ def create_order(tickets: List[Dict],
         )
 
 
-def get_orders(username: str = None) -> QuerySet:
+def get_orders(username: str = None) -> QuerySet[Order]:
     queryset = Order.objects.all()
     if username is not None:
         queryset = queryset.filter(user__username=username)
