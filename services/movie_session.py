@@ -16,7 +16,9 @@ def create_movie_session(
 
 def get_taken_seats(movie_session_id: int):
     return list(
-        Ticket.objects.filter(movie_session_id=movie_session_id).values("seat", "row")
+        Ticket.objects.filter(movie_session_id=movie_session_id).values(
+            "seat", "row"
+        )
     )
 
 

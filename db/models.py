@@ -1,5 +1,3 @@
-from symtable import Class
-
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
@@ -49,7 +47,9 @@ class CinemaHall(models.Model):
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
 
     class Meta:
         ordering = ["-created_at"]
@@ -81,13 +81,14 @@ class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
 
-    def clean(self):
+    def clean(self) -> None:
         if not 1 <= self.row <= self.movie_session.cinema_hall.rows:
             raise ValidationError(
                 {
                     "row": [
                         f"row number must be in available range: "
-                        f"(1, rows): (1, {self.movie_session.cinema_hall.rows})"
+                        f"(1, rows): (1,"
+                        f" {self.movie_session.cinema_hall.rows})"
                     ]
                 }
             )
@@ -97,7 +98,8 @@ class Ticket(models.Model):
                 {
                     "seat": [
                         f"seat number must be in available range: "
-                        f"(1, seats_in_row): (1, {self.movie_session.cinema_hall.seats_in_row})"
+                        f"(1, seats_in_row): (1,"
+                        f" {self.movie_session.cinema_hall.seats_in_row})"
                     ]
                 }
             )
@@ -105,16 +107,19 @@ class Ticket(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["row", "seat", "movie_session"], name="unique_ticket_row"
+                fields=["row", "seat", "movie_session"],
+                name="unique_ticket_row",
             )
         ]
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         self.full_clean()
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:
-        return f"{self.movie_session.movie.title} {self.movie_session.show_time} (row: {self.row}, seat: {self.seat})"
+        return (f"{self.movie_session.movie.title}"
+                f" {self.movie_session.show_time}"
+                f" (row: {self.row}, seat: {self.seat})")
 
 
 class User(AbstractUser):
