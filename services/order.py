@@ -5,7 +5,9 @@ from django.db.models import QuerySet
 from db.models import Ticket, Order, User
 
 
-def create_order(tickets: List[Dict], username: str, date: datetime = None):
+def create_order(tickets: List[Dict],
+                 username: str,
+                 date: datetime = None) -> None:
     user = User.objects.get(username=username)
     with transaction.atomic():
         order = Order.objects.create(user=user)

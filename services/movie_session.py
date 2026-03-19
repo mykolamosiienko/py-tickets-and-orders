@@ -1,5 +1,5 @@
 from django.db.models import QuerySet
-from typing import Dict, List
+
 
 from db.models import MovieSession, Ticket
 
@@ -14,7 +14,7 @@ def create_movie_session(
     )
 
 
-def get_taken_seats(movie_session_id: int):
+def get_taken_seats(movie_session_id: int) -> list:
     return list(
         Ticket.objects.filter(movie_session_id=movie_session_id).values(
             "seat", "row"
